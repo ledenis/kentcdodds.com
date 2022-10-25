@@ -44,13 +44,3 @@ kill_timeout = 5
     interval = "15s"
     restart_limit = 6
     timeout = "2s"
-
-  [[services.http_checks]]
-    interval = 10000
-    grace_period = "600s"
-    method = "get"
-    path = "/healthcheck"
-    protocol = "http"
-    timeout = 5000
-    tls_skip_verify = false
-    [services.http_checks.headers]

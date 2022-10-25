@@ -79,4 +79,6 @@ RUN mkdir -p /data /litefs/data
 
 ADD . .
 
-ENTRYPOINT "litefs"
+# ENTRYPOINT "litefs"
+
+CMD ["echo", "Hello World"]
