@@ -130,20 +130,20 @@ it here just so you know if it doesn't work.
 ## Running automated tests
 
 We have two kinds of tests, unit and component tests with Jest and E2E tests
-with Cypress.
+with Playwright.
 
 ```sh
 # run the unit and component tests with jest via:
 npm run test
 
-# run the Cypress tests in dev mode:
+# run the Playwright tests in dev mode:
 npm run test:e2e:dev
 
-# run the Cypress tests in headless mode:
+# run the Playwright tests in headless mode:
 npm run test:e2e:run
 ```
 
-Jest runs on changed files as part of the husky git commit hook. Cypress runs
+Jest runs on changed files as part of the husky git commit hook. Playwright runs
 only on CI.
 
 ## Running static tests (Formatting/Linting/Typing)

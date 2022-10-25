@@ -15,7 +15,6 @@ import {cache, shouldForceFresh} from './cache.server'
 import {getEpisodePath} from './call-kent'
 import {getDirectAvatarForUser} from './user-info.server'
 import {stripHtml} from './markdown.server'
-import type {Team} from '@prisma/client'
 
 const transistorApiSecret = getRequiredServerEnvVar('TRANSISTOR_API_SECRET')
 const podcastId = getRequiredServerEnvVar('CALL_KENT_PODCAST_ID', '67890')
@@ -73,7 +72,7 @@ async function createEpisode({
   summary: string
   description: string
   keywords: string
-  user: {firstName: string; email: string; team: Team}
+  user: {firstName: string; email: string; team: string}
   request: Request
   avatar?: string | null
 }) {

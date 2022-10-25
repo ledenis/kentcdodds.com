@@ -5,8 +5,6 @@ kill_timeout = 5
 
 [env]
   PORT = "8080"
-  CYPRESS_INSTALL_BINARY = "0"
-  HUSKY_SKIP_INSTALL = "1"
   NODE_ENV = "production"
   FLY = "true"
   PRIMARY_REGION = "den"

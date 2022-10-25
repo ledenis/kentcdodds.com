@@ -12,9 +12,6 @@ RUN apt-get update && apt-get install -y fuse openssl ffmpeg sqlite3 ca-certific
 # install all node_modules, including dev
 FROM base as deps
 
-ENV CYPRESS_INSTALL_BINARY=0
-ENV HUSKY_SKIP_INSTALL=1
-
 RUN mkdir /app/
 WORKDIR /app/
 
