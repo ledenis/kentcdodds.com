@@ -22,9 +22,23 @@ async function isConnectedToTheInternet() {
 // https://github.com/mswjs/msw/pull/923
 const forward = (): ResponseTransformer => () => {}
 
-async function updateFixture(updates: Record<string, unknown>) {
-  const mswDataPath = path.join(__dirname, `./msw.local.json`)
-  let mswData = {}
+const mswDataPath = path.join(__dirname, `./msw.local.json`)
+
+// !! side effect !!
+const clearingFixture = fs.promises.writeFile(mswDataPath, '{}')
+
+export async function updateFixture(updates: Record<string, unknown>) {
+  const mswData = await readFixture()
+  await fs.promises.writeFile(
+    mswDataPath,
+    JSON.stringify({...mswData, ...updates}, null, 2),
+  )
+}
+
+export async function readFixture() {
+  await clearingFixture
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let mswData: Record<string, any> = {}
   try {
     const contents = await fs.promises.readFile(mswDataPath)
     mswData = JSON.parse(contents.toString())
@@ -33,11 +47,9 @@ async function updateFixture(updates: Record<string, unknown>) {
       `Error reading and parsing the msw fixture. Clearing it.`,
       (error as {stack?: string}).stack ?? error,
     )
+    await fs.promises.writeFile(mswDataPath, '{}')
   }
-  await fs.promises.writeFile(
-    mswDataPath,
-    JSON.stringify({...mswData, ...updates}, null, 2),
-  )
+  return mswData
 }
 
 function requiredParam(params: URLSearchParams, param: string) {
@@ -78,7 +90,6 @@ function requiredProperty(object: {[key: string]: unknown}, property: string) {
 export {
   isE2E,
   forward,
-  updateFixture,
   requiredParam,
   requiredHeader,
   requiredProperty,

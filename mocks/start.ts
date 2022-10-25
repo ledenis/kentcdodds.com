@@ -8,7 +8,13 @@ import {transistorHandlers} from './transistor'
 import {discordHandlers} from './discord'
 import {convertKitHandlers} from './convert-kit'
 import {simplecastHandlers} from './simplecast'
-import {isConnectedToTheInternet, forward, isE2E, updateFixture} from './utils'
+import {
+  isConnectedToTheInternet,
+  forward,
+  isE2E,
+  updateFixture,
+  readFixture,
+} from './utils'
 
 // put one-off handlers that don't really need an entire file to themselves here
 const miscHandlers = [
@@ -32,8 +38,14 @@ const miscHandlers = [
       const body = Object.fromEntries(new URLSearchParams(req.body?.toString()))
       console.info('🔶 mocked email contents:', body)
 
-      if (isE2E && body.text) {
-        await updateFixture({email: body})
+      if (body.text && body.to) {
+        const fixture = await readFixture()
+        await updateFixture({
+          email: {
+            ...fixture.email,
+            [body.to]: body,
+          },
+        })
       }
       const randomId = '20210321210543.1.E01B8B612C44B41B'
       const id = `<${randomId}>@${req.params.domain}`

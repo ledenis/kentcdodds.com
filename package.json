@@ -192,6 +192,9 @@
     "public/build",
     "*.ignored/",
     "*.ignored.*",
-    "/content/blog/fix-the-not-wrapped-in-act-warning/components.jsx"
+    "/content/blog/fix-the-not-wrapped-in-act-warning/components.jsx",
+    "/test-results/",
+    "/playwright-report/",
+    "/playwright/.cache/"
   ]
 }
