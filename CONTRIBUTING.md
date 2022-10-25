@@ -121,12 +121,11 @@ endpoints are mocked out via [`MSW`](https://mswjs.io/).
 ## Caching
 
 Because the mdx files are built on-demand and that can take some time, we
-heavily cache them via redis (which is configured in the `docker-compose.yml`
-file). This means that if you need to work on content, you'll need a way to
-clear the cache. Luckily, when running the dev script, we have a file watcher
-that auto-updates the cache as you save the file. It should happen so fast you
-don't even notice what's going on, but I thought I'd mention it here just so you
-know if it doesn't work.
+heavily cache them in sqlite. This means that if you need to work on content,
+you'll need a way to clear the cache. Luckily, when running the dev script, we
+have a file watcher that auto-updates the cache as you save the file. It should
+happen so fast you don't even notice what's going on, but I thought I'd mention
+it here just so you know if it doesn't work.
 
 ## Running automated tests
 

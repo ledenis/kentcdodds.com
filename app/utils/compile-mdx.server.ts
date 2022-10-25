@@ -175,6 +175,7 @@ async function compileMdx<FrontmatterType extends Record<string, unknown>>(
   slug: string,
   githubFiles: Array<GitHubFile>,
 ) {
+  console.log('compiling mdx', slug)
   const {default: remarkAutolinkHeadings} = await import(
     'remark-autolink-headings'
   )
@@ -198,6 +199,7 @@ async function compileMdx<FrontmatterType extends Record<string, unknown>>(
   })
 
   try {
+    console.log('calling bundleMDX', slug)
     const {frontmatter, code} = await bundleMDX({
       source: indexFile.content,
       files,
@@ -216,7 +218,9 @@ async function compileMdx<FrontmatterType extends Record<string, unknown>>(
         return options
       },
     })
+    console.log('compiled', slug)
     const readTime = calculateReadingTime(indexFile.content)
+    console.log('readTime calculated', slug)
 
     return {
       code,
@@ -250,7 +254,11 @@ async function getQueue() {
   const {default: PQueue} = await import('p-queue')
   if (_queue) return _queue
 
-  _queue = new PQueue({concurrency: 1})
+  _queue = new PQueue({
+    concurrency: 1,
+    throwOnTimeout: true,
+    timeout: 1000 * 30,
+  })
   return _queue
 }
 
@@ -259,6 +267,7 @@ async function getQueue() {
 async function queuedCompileMdx<
   FrontmatterType extends Record<string, unknown>,
 >(...args: Parameters<typeof compileMdx>) {
+  console.log('adding compilemdx item to queue', args[0])
   const queue = await getQueue()
   const result = await queue.add(() => compileMdx<FrontmatterType>(...args))
   return result

@@ -1,5 +1,10 @@
 import * as React from 'react'
-import type {HeadersFunction, LoaderArgs, MetaFunction} from '@remix-run/node'
+import type {
+  HeadersFunction,
+  LoaderArgs,
+  MetaFunction,
+  SerializeFrom,
+} from '@remix-run/node'
 import {json} from '@remix-run/node'
 import {Link, useLoaderData, useSearchParams} from '@remix-run/react'
 import clsx from 'clsx'
@@ -24,8 +29,6 @@ import {filterPosts, getRankingLeader} from '~/utils/blog'
 import {HeroSection} from '~/components/sections/hero-section'
 import {PlusIcon} from '~/components/icons/plus-icon'
 import {Button} from '~/components/button'
-import type {Timings} from '~/utils/metrics.server'
-import {getServerTimeHeader} from '~/utils/metrics.server'
 import {ServerError} from '~/components/errors'
 import {
   formatAbbreviatedNumber,
@@ -51,7 +54,6 @@ import {useTeam} from '~/utils/team-provider'
 import type {LoaderData as RootLoaderData} from '../root'
 import {getSocialMetas} from '~/utils/seo'
 import {RssIcon} from '~/components/icons/rss-icon'
-import type {UseDataFunctionReturn} from '@remix-run/react/dist/components'
 
 const handleId = 'blog'
 export const handle: KCDHandle = {
@@ -60,8 +62,6 @@ export const handle: KCDHandle = {
 }
 
 export async function loader({request}: LoaderArgs) {
-  const timings: Timings = {}
-
   const [
     posts,
     [recommended],
@@ -71,7 +71,7 @@ export async function loader({request}: LoaderArgs) {
     allPostReadRankings,
     userReads,
   ] = await Promise.all([
-    getBlogMdxListItems({request, timings}).then(allPosts =>
+    getBlogMdxListItems({request}).then(allPosts =>
       allPosts.filter(p => !p.frontmatter.draft),
     ),
     getBlogRecommendations(request, {limit: 1}),
@@ -105,7 +105,6 @@ export async function loader({request}: LoaderArgs) {
     headers: {
       'Cache-Control': 'private, max-age=3600',
       Vary: 'Cookie',
-      'Server-Timing': getServerTimeHeader(timings),
     },
   })
 }
@@ -114,7 +113,7 @@ export const headers: HeadersFunction = reuseUsefulLoaderHeaders
 
 export const meta: MetaFunction = ({data, parentsData}) => {
   const {requestInfo} = parentsData.root as RootLoaderData
-  const {totalBlogReaders, posts} = data as UseDataFunctionReturn<typeof loader>
+  const {totalBlogReaders, posts} = data as SerializeFrom<typeof loader>
 
   return {
     ...getSocialMetas({
