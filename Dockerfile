@@ -81,4 +81,4 @@ ADD . .
 
 # ENTRYPOINT "litefs"
 
-CMD ["echo", "Hello World"]
+CMD ["npm", "run", "start"]
