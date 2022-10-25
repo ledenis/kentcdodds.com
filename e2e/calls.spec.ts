@@ -2,7 +2,7 @@ import {test, expect, readEmail} from './utils'
 import {faker} from '@faker-js/faker'
 import invariant from 'tiny-invariant'
 
-test('Call Kent recording flow', async ({page, baseURL, login}) => {
+test('Call Kent recording flow', async ({page, login}) => {
   const user = await login()
   await page.goto('/calls')
 
