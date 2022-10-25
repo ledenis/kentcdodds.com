@@ -2,7 +2,7 @@ import {test, expect, readEmail} from './utils'
 import {faker} from '@faker-js/faker'
 import invariant from 'tiny-invariant'
 
-test('A new user can create an account', async ({page, login}) => {
+test('Users can send an email', async ({page, login}) => {
   const user = await login()
   await page.goto('/')
 

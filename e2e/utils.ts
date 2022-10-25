@@ -48,11 +48,11 @@ export function extractUrl(text: string) {
 
 const users = new Set<User>()
 
-export async function insertNewUser() {
+export async function insertNewUser(userOverrides?: Partial<User>) {
   const prisma = new PrismaClient()
 
   const user = await prisma.user.create({
-    data: createUser(),
+    data: {...createUser(), ...userOverrides},
   })
   await prisma.$disconnect()
   users.add(user)
@@ -66,13 +66,13 @@ export async function deleteUserByEmail(email: string) {
 }
 
 export const test = base.extend<{
-  login: () => Promise<User>
+  login: (userOverrides?: Partial<User>) => Promise<User>
 }>({
   login: [
     async ({page, baseURL}, use) => {
       invariant(baseURL, 'baseURL is required playwright config')
-      return use(async () => {
-        const user = await insertNewUser()
+      return use(async userOverrides => {
+        const user = await insertNewUser(userOverrides)
         const session = await getSession(new Request(baseURL))
         await session.signIn(user)
         const cookieValue = await session.commit()
