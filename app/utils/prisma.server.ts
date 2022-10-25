@@ -1,5 +1,4 @@
 import {PrismaClient} from '@prisma/client'
-import chalk from 'chalk'
 import type {Session} from '~/types'
 import {encrypt, decrypt} from './encryption.server'
 import {ensurePrimary} from './misc'
@@ -29,6 +28,7 @@ function getClient(): PrismaClient {
   })
   client.$on('query', async e => {
     if (e.duration < logThreshold) return
+    const {default: chalk} = await import('chalk')
 
     const color =
       e.duration < 30

@@ -1,7 +1,7 @@
 import {test, expect} from '@playwright/test'
 import {faker} from '@faker-js/faker'
 import invariant from 'tiny-invariant'
-import {extractUrl, readEmail} from './utils'
+import {deleteUserByEmail, extractUrl, readEmail} from './utils'
 
 test('A new user can create an account', async ({page}) => {
   const firstName = faker.name.firstName()
@@ -49,4 +49,9 @@ test('A new user can create an account', async ({page}) => {
   await expect(
     page.getByRole('heading', {level: 2, name: /profile/i}),
   ).toBeVisible()
+
+  await deleteUserByEmail(emailAddress)
+
+  await page.reload()
+  await expect(page).toHaveURL(/.*login/)
 })
