@@ -42,7 +42,8 @@ export const cache: CachifiedCache = {
     })
   },
   async delete(key) {
-    await prisma.cache.delete({where: {key}})
+    // we don't care if the key didn't already exist
+    await prisma.cache.delete({where: {key}}).catch(() => {})
   },
 }
 
