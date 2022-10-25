@@ -81,9 +81,7 @@ async function getMdxPagesInDirectory(
   contentDir: string,
   options: CachifiedOptions,
 ) {
-  console.log('01: getMdxPagesInDirectory')
   const dirList = await getMdxDirList(contentDir, options)
-  console.log('02: getMdxPagesInDirectory')
 
   // our octokit throttle plugin will make sure we don't hit the rate limit
   const pageDatas = await Promise.all(
@@ -94,14 +92,12 @@ async function getMdxPagesInDirectory(
       }
     }),
   )
-  console.log('03: getMdxPagesInDirectory')
 
   const pages = await Promise.all(
     pageDatas.map(pageData =>
       compileMdxCached({contentDir, ...pageData, options}),
     ),
   )
-  console.log('04: getMdxPagesInDirectory')
   return pages.filter(typedBoolean)
 }
 
@@ -110,7 +106,6 @@ const getDirListKey = (contentDir: string) => `${contentDir}:dir-list`
 async function getMdxDirList(contentDir: string, options?: CachifiedOptions) {
   const {forceFresh, ttl = defaultTTL, request} = options ?? {}
   const key = getDirListKey(contentDir)
-  console.log('getMdxDirList', contentDir)
   return cachified({
     cache,
     ttl,
@@ -118,8 +113,6 @@ async function getMdxDirList(contentDir: string, options?: CachifiedOptions) {
     key,
     checkValue: (value: unknown) => Array.isArray(value),
     getFreshValue: async () => {
-      console.log('getFreshValue getMdxDirList', contentDir)
-      console.time(`getFreshValue getMdxDirList ${contentDir}`)
       const fullContentDirPath = `content/${contentDir}`
       const dirList = (await downloadDirList(fullContentDirPath))
         .map(({name, path}) => ({
@@ -129,7 +122,6 @@ async function getMdxDirList(contentDir: string, options?: CachifiedOptions) {
             .replace(/\.mdx$/, ''),
         }))
         .filter(({name}) => name !== 'README.md')
-      console.timeEnd(`getFreshValue getMdxDirList ${contentDir}`)
       return dirList
     },
   })
@@ -202,7 +194,6 @@ async function compileMdxCached({
     key,
     checkValue: checkCompiledValue,
     getFreshValue: async () => {
-      console.log('gettingFresh value of mdx', {contentDir, slug})
       const compiledPage = await compileMdx<MdxPage['frontmatter']>(slug, files)
       if (compiledPage) {
         if (
@@ -302,8 +293,6 @@ async function getBlogMdxListItems(options: CachifiedOptions) {
     forceFresh: await shouldForceFresh({forceFresh, request, key}),
     key,
     getFreshValue: async () => {
-      console.log('getting fresh value for blog mdx list items')
-      console.time('getBlogMdxListItems getFreshValue')
       let pages = await getMdxPagesInDirectory('blog', options).then(allPosts =>
         allPosts.filter(p => !p.frontmatter.draft),
       )
@@ -314,7 +303,6 @@ async function getBlogMdxListItems(options: CachifiedOptions) {
         return aTime > zTime ? -1 : aTime === zTime ? 0 : 1
       })
 
-      console.timeEnd('getBlogMdxListItems getFreshValue')
       return pages.map(mapFromMdxPageToMdxListItem)
     },
   })
