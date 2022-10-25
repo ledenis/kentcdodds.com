@@ -127,7 +127,7 @@ jobs:
           useLockFile: false
 
       - name: 🌐 Install Playwright Browsers
-        run: npx playwright install --with-deps
+        run: npx playwright install chromium --with-deps
 
       - name: 🛠 Setup Database
         run: npx prisma migrate reset --force
